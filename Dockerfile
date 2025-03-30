@@ -2,23 +2,24 @@
 FROM gradle:8.4-jdk21 AS build
 WORKDIR /app
 
-# Copy Gradle files first for caching dependencies
-COPY gradle gradle
-COPY gradlew .
-COPY build.gradle.kts .
-COPY settings.gradle.kts .
-
-# Give execution permission to Gradle wrapper
-RUN chmod +x gradlew
-
-# Download dependencies (before copying source code to improve caching)
-RUN ./gradlew dependencies --no-daemon
-
-# Copy the rest of the project files
+# Copy all project files into the container
 COPY . .
 
-# Build the application
-RUN ./gradlew clean shadowJar --no-daemon
+# Build the project using Gradlegit status
+RUN gradle clean shadowJar --no-daemon
+
+# Stage 2: Create the runtime container
+FROM amazoncorretto:21
+WORKDIR /app
+
+# Copy the built JAR from the previous stage
+COPY --from=build /app/build/libs/*.jar app.jar
+
+# Expose the port defined in Application.conf
+EXPOSE 8080
+
+# Start the application
+CMD ["java", "-jar", "app.jar"]
 
 # 🌟 Stage 2: Create a lightweight runtime container
 FROM amazoncorretto:21
