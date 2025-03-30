@@ -1,0 +1,16 @@
+# Ignore build directory from local machine
+build/
+
+# Ignore Gradle cache (but NOT the wrapper scripts)
+.gradle/
+
+# Ignore IntelliJ project files
+.idea/
+
+# Ignore OS-specific files (even if they are not currently present)
+.DS_Store
+Thumbs.db
+
+# Ignore environment variable files (security best practice)
+.env
+*.env
