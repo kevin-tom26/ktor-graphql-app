@@ -91,10 +91,10 @@ fun Route.authRoutes(authRepository: UserAuthRepository) {
 
         post("/refresh"){
             val request = call.receive<Map<String, String>>()
-            val refreshToken = request["refreshToken"] ?: return@post call.respond("No refresh token provided")
-            val userId = JwtConfig.verifyRefreshToken(refreshToken) ?: return@post call.respond("Invalid refresh token")
+            val refreshToken = request["refreshToken"] ?: return@post call.respond(HttpStatusCode.NotFound,"No refresh token provided")
+            val userId = JwtConfig.verifyRefreshToken(refreshToken) ?: return@post call.respond(HttpStatusCode.NotFound,"Invalid refresh token")
 
-            val user = authRepository.getUserByIdForUpdate(userId) ?: return@post call.respond("User not found")
+            val user = authRepository.getUserByIdForUpdate(userId) ?: return@post call.respond(HttpStatusCode.NotFound,"User not found")
 
             val newAccessToken = JwtConfig.generateAccessToken(user)
             val newRefreshToken = JwtConfig.generateRefreshToken(user)
