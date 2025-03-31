@@ -39,8 +39,9 @@ fun Route.authRoutes(authRepository: UserAuthRepository) {
                 ) != null)
             ) {
                 call.respond(
+                    HttpStatusCode.Conflict,
                     message = RestResponse<String?>(
-                        status = StatusResponse(statusCode = 404, message = "User already exists!"),
+                        status = StatusResponse(statusCode = 409, message = "User already exists!"),
                         response = "User already exists!"
                     )
                 )
@@ -66,8 +67,9 @@ fun Route.authRoutes(authRepository: UserAuthRepository) {
 
             if (user == null || !BCrypt.checkpw(password, user.hashPassword)) {
                 call.respond(
+                    HttpStatusCode.Unauthorized,
                     message = RestResponse<String?>(
-                        status = StatusResponse(statusCode = 404, message = "Invalid credentials!"),
+                        status = StatusResponse(statusCode = 401, message = "Invalid credentials!"),
                         response = "Invalid credentials!"
                     )
                 )
